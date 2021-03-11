@@ -1,7 +1,7 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Metzenas
 
-//@version=4
+//@version=2
 strategy("MC Strategy", overlay=true)
 
 n1 = input(10, "Channel Length")
@@ -21,17 +21,21 @@ wt1 = tci
 wt2 = sma(wt1,3)
 crossCondition = cross(wt1, wt2)
 
-longSignal = crossCondition and (wt2 - wt1 <= 0) and wt2 <= 40 // wt1 <= 40
-shortSignal = crossCondition and (wt2 - wt1 > 0) and wt2 >= 40// wt2 >= 40
+// Money Flow
+length = input(title="Length", type=input.integer, defval=60, minval=1, maxval=2000)
+src = hlc3
+upper = sum(volume * (change(src) <= 0 ? 0 : src), length)
+lower = sum(volume * (change(src) >= 0 ? 0 : src), length)
+_rsi(upper, lower) =>
+    if lower == 0
+        100
+    if upper == 0
+        0
+	100.0 - (100.0 / (1.0 + upper / lower))
+mf = _rsi(upper, lower)
 
-// crossCondition = cross(wt1, wt2)
-// if (crossCondition and wt2 - wt1 > 0 and wt2 > obLevel2)
-// if (wt2 >= 40)
-//    strategy.entry("Short Entry Id", strategy.short)
-// else if (crossCondition and wt2 - wt1 <= 0 and wt2 <= osLevel2)
-// else if (wt1 <= 40)
-//     strategy.entry("Long Entry Id", strategy.long)
+longSignal = crossCondition and (wt2 - wt1 <= 0) and wt2 <= 40 and wt1 <= 40 and mf <= 40 
+shortSignal = crossCondition and (wt2 - wt1 > 0) and wt2 >= 40 and wt2 >= 40 and mf >= 60 
 
-//plot(cross(wt1, wt2) ? wt2 : na, color = (wt2 - wt1 > 0 ? red: lime) , style = circles, linewidth = 6)
 strategy.entry("long", true, 1, when = longSignal)
 strategy.close("long", when = shortSignal)
