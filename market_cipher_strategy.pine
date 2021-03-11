@@ -34,8 +34,9 @@ _rsi(upper, lower) =>
 	100.0 - (100.0 / (1.0 + upper / lower))
 mf = _rsi(upper, lower)
 
-longSignal = crossCondition and (wt2 - wt1 <= 0) and wt2 <= 40 and wt1 <= 40 and mf <= 40 
-shortSignal = crossCondition and (wt2 - wt1 > 0) and wt2 >= 40 and wt2 >= 40 and mf >= 60 
+
+longSignal = crossCondition and (wt2 - wt1 <= 0) and wt2 <= 40 and mf <= 40 
+shortSignal = crossCondition and (wt2 - wt1 > 0) and wt2 >= 40 and mf >= 60 
 
 strategy.entry("long", true, 1, when = longSignal)
 strategy.close("long", when = shortSignal)
