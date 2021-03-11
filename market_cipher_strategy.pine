@@ -1,0 +1,37 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Metzenas
+
+//@version=4
+strategy("MC Strategy", overlay=true)
+
+n1 = input(10, "Channel Length")
+n2 = input(21, "Average Length")
+obLevel1 = input(60, "Over Bought Level 1")
+obLevel2 = input(53, "Over Bought Level 2")
+osLevel1 = input(-60, "Over Sold Level 1")
+osLevel2 = input(-53, "Over Sold Level 2")
+
+ap = hlc3 
+esa = ema(ap, n1)
+d = ema(abs(ap - esa), n1)
+ci = (ap - esa) / (0.015 * d)
+tci = ema(ci, n2)
+ 
+wt1 = tci
+wt2 = sma(wt1,3)
+crossCondition = cross(wt1, wt2)
+
+longSignal = crossCondition and (wt2 - wt1 <= 0) and wt2 <= 40 // wt1 <= 40
+shortSignal = crossCondition and (wt2 - wt1 > 0) and wt2 >= 40// wt2 >= 40
+
+// crossCondition = cross(wt1, wt2)
+// if (crossCondition and wt2 - wt1 > 0 and wt2 > obLevel2)
+// if (wt2 >= 40)
+//    strategy.entry("Short Entry Id", strategy.short)
+// else if (crossCondition and wt2 - wt1 <= 0 and wt2 <= osLevel2)
+// else if (wt1 <= 40)
+//     strategy.entry("Long Entry Id", strategy.long)
+
+//plot(cross(wt1, wt2) ? wt2 : na, color = (wt2 - wt1 > 0 ? red: lime) , style = circles, linewidth = 6)
+strategy.entry("long", true, 1, when = longSignal)
+strategy.close("long", when = shortSignal)
