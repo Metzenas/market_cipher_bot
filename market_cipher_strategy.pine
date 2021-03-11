@@ -1,7 +1,7 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Metzenas
 
-//@version=2
+//@version=4
 strategy("MC Strategy", overlay=true)
 
 n1 = input(10, "Channel Length")
@@ -34,9 +34,10 @@ _rsi(upper, lower) =>
 	100.0 - (100.0 / (1.0 + upper / lower))
 mf = _rsi(upper, lower)
 
-
+// Final Signal
 longSignal = crossCondition and (wt2 - wt1 <= 0) and wt2 <= 40 and mf <= 40 
 shortSignal = crossCondition and (wt2 - wt1 > 0) and wt2 >= 40 and mf >= 60 
 
+// Execute
 strategy.entry("long", true, 1, when = longSignal)
 strategy.close("long", when = shortSignal)
