@@ -35,22 +35,59 @@ _rsi(upper, lower) =>
 	100.0 - (100.0 / (1.0 + upper / lower))
 mf = _rsi(upper, lower)
 
-longSignal = crossCondition and (wt2 - wt1 <= 0) and wt2 <= 40 and mf <= 40 
-shortSignal = crossCondition and (wt2 - wt1 > 0) and wt2 >= 40 and mf >= 60 
+bailout_signal = mf < 25
 
-alertcondition(longSignal, "MC long open", "message")
-alertcondition(shortSignal, "MC long close", "message")
+// Intermediate
+long_0 = wt2 <= 0 and mf <= 40
+short_0 = wt2 >= 40 and mf >= 55 
+long_1 = wt2 <= -45
+short_1 = wt2 >= 0
 
-if (longSignal)
+// Base
+long_signal_base = crossCondition and (wt2 - wt1 <= 0) and long_0
+short_signal_base = crossCondition and (wt2 - wt1 > 0) and short_0
+
+// Scraper
+long_signal_scrape = crossCondition and (wt2 - wt1 <= 0) and long_1
+short_signal_scrape = crossCondition and (wt2 - wt1 > 0) and short_1
+
+alertcondition(bailout_signal, "MC circuit breaker", "message")
+alertcondition(long_signal_base, "MC open", "message")
+alertcondition(short_signal_base, "MC close", "message")
+alertcondition(long_signal_scrape, "MC scrape open", "message")
+alertcondition(short_signal_scrape, "MC scrape close", "message")
+
+if (bailout_signal)
     l = label.new(bar_index, high)
-    label.set_text(l, "buy@\n"+tostring(close))
+    label.set_text(l, "BREAKER!@\n"+tostring(close))
+    label.set_color(l, color.white)
+    label.set_yloc(l, yloc.abovebar)
+    label.set_style(l, label.style_labeldown)
+
+if (long_signal_base)
+    l = label.new(bar_index, high)
+    label.set_text(l, "buy_base@\n"+tostring(close))
     label.set_color(l, color.green)
     label.set_yloc(l, yloc.belowbar)
     label.set_style(l, label.style_labelup)
     
-if (shortSignal)
+if (short_signal_base)
     l = label.new(bar_index, high)
-    label.set_text(l, "sell@\n"+tostring(close))
+    label.set_text(l, "sell_base@\n"+tostring(close))
     label.set_color(l, color.red)
+    label.set_yloc(l, yloc.abovebar)
+    label.set_style(l, label.style_labeldown)
+
+if (long_signal_scrape)
+    l = label.new(bar_index, high)
+    label.set_text(l, "buy_scrape@\n"+tostring(close))
+    label.set_color(l, color.blue)
+    label.set_yloc(l, yloc.belowbar)
+    label.set_style(l, label.style_labelup)
+    
+if (short_signal_scrape)
+    l = label.new(bar_index, high)
+    label.set_text(l, "sell_scrape@\n"+tostring(close))
+    label.set_color(l, color.fuchsia)
     label.set_yloc(l, yloc.abovebar)
     label.set_style(l, label.style_labeldown)
