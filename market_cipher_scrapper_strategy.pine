@@ -39,16 +39,16 @@ mf = _rsi(upper, lower)
 // Intermediate
 long_0 = wt2 <= 0 and mf <= 40
 short_0 = wt2 >= 40 and mf >= 55 
-long_1 = wt2 <= -40 and mf <= 55
-short_1 = wt2 >= 0 and mf >= 45
+long_scrape = wt2 <= -45
+short_scrape = wt2 >= 0
 
 // Base
 long_signal_base = crossCondition and (wt2 - wt1 <= 0) and long_0
 short_signal_base = crossCondition and (wt2 - wt1 > 0) and short_0
 
 // Scraper
-long_signal_scrape = crossCondition and (wt2 - wt1 <= 0) and long_1
-short_signal_scrape = crossCondition and (wt2 - wt1 > 0) and short_1
+long_signal_scrape = crossCondition and (wt2 - wt1 <= 0) and long_scrape
+short_signal_scrape = crossCondition and (wt2 - wt1 > 0) and short_scrape
 
 // Execute
 if scrape
