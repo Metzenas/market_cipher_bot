@@ -4,10 +4,12 @@
 // If you use this code in its original/modified form, do drop me a note. 
 //
 study(title="Market Cipher - Waves", shorttitle="MC Waves")
-n1 = input(10, "Channel Length")
-n2 = input(21, "Average Length")
+// n1 = input(10, "Channel Length")
+// n2 = input(21, "Average Length")
+n1 = 10
+n2 = 21
 obLevel1 = input(60, "Over Bought Level 1")
-obLevel2 = input(53, "Over Bought Level 2")
+obLevel2 = input(45, "Over Bought Level 2")
 osLevel1 = input(-60, "Over Sold Level 1")
 osLevel2 = input(-53, "Over Sold Level 2")
  
@@ -28,7 +30,7 @@ plot(osLevel2, color=green)
 
 plot(wt1, color=green)
 plot(wt2, color=red)
-plot(wt1-wt2, color=blue, style=area, transp=80)
+plot(wt1-wt2, color=white, style=area, transp=80)
 plot(cross(wt1, wt2) ? wt2 : na, color = black , style = circles, linewidth = 3)
-plot(cross(wt1, wt2) ? wt2 : na, color = (wt2 - wt1 > 0 ? red : lime) , style = circles, linewidth = 2)
+plot(cross(wt1, wt2) ? wt1 : na, color = (wt2 - wt1 > 0 ? red : lime) , style = circles, linewidth = 2)
 barcolor(cross(wt1, wt2) ? (wt2 - wt1 > 0 ? aqua : yellow) : na)

@@ -37,36 +37,19 @@ _rsi(upper, lower) =>
 	100.0 - (100.0 / (1.0 + upper / lower))
 mf = _rsi(upper, lower)
 
-bailout_signal = mf < 25
+// Filters
+body_size = abs(close - open) / (high - low)
 
 // Base conditions
 long_0 = wt2 <= 0 and mf <= 40
 short_0 = wt2 >= 40 and mf >= 55
 
-// Scrape conditions
-long_scrape = wt2 <= -45
-short_scrape = wt2 >= 0
-
 // Base
 long_signal_base = crossCondition and (wt2 - wt1 <= 0) and long_0
-short_signal_base = crossCondition and (wt2 - wt1 > 0) and short_0
+short_signal_base = crossCondition and (wt2 - wt1 > 0) and short_0 and body_size >= 0.2
 
-// Scraper
-long_signal_scrape = crossCondition and long_condition and long_scrape
-short_signal_scrape = crossCondition and short_condition and short_scrape
-
-alertcondition(bailout_signal, "MC circuit breaker", "Circuit Breaker")
 alertcondition(long_signal_base, "MC open", "MC - Buy")
 alertcondition(short_signal_base, "MC close", "MC - Sell")
-alertcondition(long_signal_scrape, "MC scrape open", "Scrape - Buy")
-alertcondition(short_signal_scrape, "MC scrape close", "Scrape - Sell")
-
-if (bailout_signal)
-    l = label.new(bar_index, high)
-    label.set_text(l, "BREAKER!@\n"+tostring(close))
-    label.set_color(l, color.white)
-    label.set_yloc(l, yloc.abovebar)
-    label.set_style(l, label.style_labeldown)
 
 if (long_signal_base)
     l = label.new(bar_index, high)
@@ -80,18 +63,4 @@ if (short_signal_base)
     label.set_text(l, "sell_base@\n"+tostring(close))
     label.set_color(l, color.red)
     label.set_yloc(l, yloc.price)
-    label.set_style(l, label.style_labeldown)
-
-if (long_signal_scrape)
-    l = label.new(bar_index, high)
-    label.set_text(l, "buy_scrape@\n"+tostring(close))
-    label.set_color(l, color.blue)
-    label.set_yloc(l, yloc.belowbar)
-    label.set_style(l, label.style_labelup)
-    
-if (short_signal_scrape)
-    l = label.new(bar_index, high)
-    label.set_text(l, "sell_scrape@\n"+tostring(close))
-    label.set_color(l, color.fuchsia)
-    label.set_yloc(l, yloc.abovebar)
     label.set_style(l, label.style_labeldown)
