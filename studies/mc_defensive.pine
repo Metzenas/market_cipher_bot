@@ -2,10 +2,11 @@
 // © Metzenas
 
 //@version=4
-study("MC Study", overlay=true)
+study("MC - Defensive", overlay=true)
 
 n1 = input(10, "Channel Length")
 n2 = input(21, "Average Length")
+ema21 = input(21, "EMA 21")
 obLevel1 = input(60, "Over Bought Level 1")
 obLevel2 = input(53, "Over Bought Level 2")
 osLevel1 = input(-60, "Over Sold Level 1")
@@ -16,6 +17,7 @@ esa = ema(ap, n1)
 d = ema(abs(ap - esa), n1)
 ci = (ap - esa) / (0.015 * d)
 tci = ema(ci, n2)
+ema21_ = ema(hlc3, ema21)
  
 wt1 = tci
 wt2 = sma(wt1,3)

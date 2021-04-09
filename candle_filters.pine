@@ -1,3 +1,0 @@
-green_candle = close > open
-body_size = abs(close - open) / (high - low)
-body_percent = (close - open) / open

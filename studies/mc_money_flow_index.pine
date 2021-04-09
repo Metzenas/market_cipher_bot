@@ -1,0 +1,21 @@
+//@version=4
+study(title="MC - Money Flow Index", shorttitle="MFI", format=format.price, precision=2, resolution="")
+length = input(title="Length", type=input.integer, defval=60, minval=1, maxval=2000)
+src = hlc3
+upper = sum(volume * (change(src) <= 0 ? 0 : src), length)
+lower = sum(volume * (change(src) >= 0 ? 0 : src), length)
+_rsi(upper, lower) =>
+    if lower == 0
+        100
+    if upper == 0
+        0
+	100.0 - (100.0 / (1.0 + upper / lower))
+mf = _rsi(upper, lower)
+MFIColor = mf >= 50 ? #00ff00 : #ff0000
+
+plot(mf, "MF", color=MFIColor)
+
+// Reference Lines
+zeroLine=hline(50, title="Zero Line", color=#c0c0c0)
+oversold=hline(40, title="Oversold", color=#00ff00)
+overBought=hline(55, title="Overbaught", color=#ff0000)

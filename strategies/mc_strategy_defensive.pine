@@ -2,11 +2,12 @@
 // © Metzenas
 
 //@version=4
-strategy("MC Strategy - Live", overlay=true, pyramiding=6)
+strategy("MC Strategy - Defensive", overlay=true, pyramiding=6)
 
 scrape = input(false, "Use Scrapping")
 n1 = input(10, "Channel Length")
 n2 = input(21, "Average Length")
+ema21 = input(21, "EMA 21")
 obLevel1 = input(60, "Over Bought Level 1")
 obLevel2 = input(53, "Over Bought Level 2")
 osLevel1 = input(-60, "Over Sold Level 1")
@@ -17,10 +18,11 @@ esa = ema(ap, n1)
 d = ema(abs(ap - esa), n1)
 ci = (ap - esa) / (0.015 * d)
 tci = ema(ci, n2)
+ema21_ = ema(hlc3, ema21)
  
 wt1 = tci
 wt2 = sma(wt1,3)
-crossCondition = cross(wt1, wt2)
+cross_condition = cross(wt1, wt2)
 
 ////////////////
 // Money Flow //
@@ -35,20 +37,19 @@ _rsi(upper, lower) =>
         0
 	100.0 - (100.0 / (1.0 + upper / lower))
 mf = _rsi(upper, lower)
-// from_middle = abs(mf-50)
+diverge_long = abs(ema21_ - open) / open
 
 // Intermediate
-long_0 = wt2 <= 0 and mf <= 40
-short_0 = wt2 >= 40 and mf >= 55
-long_scrape = wt2 <= -45
-short_scrape = wt2 >= 0
+long_base = wt2 <= 0 and mf <= 40
+short_base = wt2 >= 40 and mf >= 55
+long_diverge = mf <= 50 and diverge_long > 0.008
 
 // Filters
 body_size = abs(close - open) / (high - low)
 
 // Base
-long_signal_base = crossCondition and (wt2 - wt1 <= 0) and long_0
-short_signal_base = crossCondition and (wt2 - wt1 > 0) and short_0 and body_size >= 0.2
+long_signal_base = cross_condition and (wt2 - wt1 <= 0) and (long_base or long_diverge) and body_size >= 0.1
+short_signal_base = cross_condition and (wt2 - wt1 > 0) and short_base and body_size >= 0.2
 
 // Execute
 strategy.entry("long_base", true, 1, when = long_signal_base)
