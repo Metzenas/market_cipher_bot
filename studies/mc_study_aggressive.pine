@@ -2,18 +2,18 @@
 // © Metzenas
 
 //@version=4
-study("MC - Aggressive", overlay=true)
+study("MC Study - Aggressive", overlay=true)
 
 n1 = input(10, "Channel Length")
 n2 = input(21, "Average Length")
-ema21 = input(21, "EMA 21")
+// ema21 = input(21, "EMA 21")
 
 ap = hlc3 
 esa = ema(ap, n1)
 d = ema(abs(ap - esa), n1)
 ci = (ap - esa) / (0.015 * d)
 tci = ema(ci, n2)
-ema21_ = ema(hlc3, ema21)
+// ema21_ = ema(hlc3, ema21)
  
 wt1 = tci
 wt2 = sma(wt1,3)
@@ -46,5 +46,5 @@ if (long_signal_base)
     l = label.new(bar_index, high)
     label.set_text(l, "buy_base@\n"+tostring(close))
     label.set_color(l, color.green)
-    label.set_yloc(l, yloc.price)
-    label.set_style(l, label.style_labelup)
+    label.set_yloc(l, yloc.belowbar)
+    label.set_style(l, label.style_label_up)

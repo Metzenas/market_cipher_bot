@@ -16,7 +16,7 @@ targetProfit = input(title="Target profit (%)", type=input.float, step=0.1, minv
 startTime = input(title="Start Time", defval=timestamp("1 Mar 2021"), type=input.time)
 endTime = input(title="End Time", defval=timestamp("31 Dec 2021"), type=input.time)
 
-dealStartType = input(title="Deal Start Condition", defval="ASAP", options=["ASAP", "Script", "Indicator"])
+dealStartType = input(title="Deal Start Condition", defval="Indicator", options=["ASAP", "Script", "Indicator"])
 sourceDealStart = input(title="Deal Start Source", defval=close, type=input.source)
 sourceDealStartValue = input(title="Deal Start Value", defval=0, type=input.float)
 
